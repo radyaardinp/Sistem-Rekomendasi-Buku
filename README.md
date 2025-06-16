@@ -64,4 +64,17 @@ Adapun penjelasan masing-masing data adalah sebagai berikut:
 | ISBN                 | Kode unik buku                                      |
 | Book-Rating          | Nilai yang diberikan pengguna terhadap buku (0-10)  |
 
-#### Insight yang dida
+- Pada data rating memiliki dimensi data 1149780 baris dan 3 kolom
+- Pada data rating tidak memiliki missing value dan data yang duplikat
+- Pada data rating, rating 0 memiliki jumlah buku paling banyak, yaitu 716109 karya
+  ![image](https://github.com/user-attachments/assets/b31fd158-bbe3-485b-8d97-c077e96544cd)
+
+- Pada data rating, user 11676 merupakan user yang paling sering memberikan rating.
+  ![image](https://github.com/user-attachments/assets/f4d6183e-3e18-467d-95ff-951424e70d07)
+
+- Pada data rating, buku dengan nomor ISBN 0971880107 merupakan buku yang paling sering diberikan rating.
+
+  ![image](https://github.com/user-attachments/assets/bb53f135-f1c2-4185-b447-38feee24e2f7)
+
+## Data Preparation
+
