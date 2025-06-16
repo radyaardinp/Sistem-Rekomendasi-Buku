@@ -77,4 +77,6 @@ Adapun penjelasan masing-masing data adalah sebagai berikut:
   ![image](https://github.com/user-attachments/assets/bb53f135-f1c2-4185-b447-38feee24e2f7)
 
 ## Data Preparation
+Pada tahap ini, dilakukan serangkaian proses untuk menyiapkan data sebelum masuk ke proses pelatihan model. Langkah-langkah yang dilakukan disusun secara sistematis untuk memastikan data bersih, konsisten, dan relevan. Berikut adalah tahapan data preparation yang dilakukan:
 
+#### Data buku
