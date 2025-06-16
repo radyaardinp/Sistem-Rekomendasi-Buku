@@ -80,3 +80,26 @@ Adapun penjelasan masing-masing data adalah sebagai berikut:
 Pada tahap ini, dilakukan serangkaian proses untuk menyiapkan data sebelum masuk ke proses pelatihan model. Langkah-langkah yang dilakukan disusun secara sistematis untuk memastikan data bersih, konsisten, dan relevan. Berikut adalah tahapan data preparation yang dilakukan:
 
 #### Data buku
+**1. Mengisi Missing Value**
+
+pada kolom Book-Author dan Publisher diisi dengan nilai "unknown" agar tidak mengganggu proses pengolahan data berbasis teks. Sementara itu, kolom Image-URL-L dihapus karena tidak digunakan dalam proses modeling dan memiliki nilai kosong yang lebih dari satu.
+
+**2. Menghapus Duplikasi**
+
+Data duplikat dihapus untuk memastikan bahwa tidak ada entri buku yang terduplikasi, sehingga sistem rekomendasi tidak memberikan saran yang redundan.
+
+**3. Mengonversi Tipe Data Tahun**
+
+Kolom Year-Of-Publication diubah menjadi tipe numerik (int) untuk memastikan keseragaman format. Tahun-tahun yang tidak valid, seperti nilai <1000 atau >2025, juga disaring untuk menjaga keakuratan informasi terbit.
+
+**4. Normalisasi Teks**
+
+Kolom Book-Title, Book-Author, dan Publisher dinormalisasi dengan mengubah semua huruf menjadi huruf kecil (lowercase) dan menghapus spasi di awal/akhir teks. Hal ini dilakukan agar pencocokan data teks lebih akurat dan konsisten.
+
+#### Data Rating
+**1. Menghapus Rating Nol**
+
+Data rating dengan nilai 0 dihapus karena dianggap tidak merepresentasikan penilaian pengguna secara eksplisit terhadap buku tersebut.
+
+**2. Menyaring Buku Aktif**
+Data disaring agar hanya mencakup buku-buku yang dianggap aktif, yaitu buku yang memiliki jumlah rating di atas ambang batas tertentu. Ini dilakukan untuk mengurangi sparsity dan meningkatkan kualitas hasil rekomendasi.
