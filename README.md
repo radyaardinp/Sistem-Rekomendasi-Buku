@@ -119,8 +119,12 @@ Jumlah total pengguna dan buku dihitung menggunakan `nunique()` untuk menentukan
 **6. Mempersiapkan Data untuk Modeling**
 Dataset akhir yang digunakan hanya terdiri dari tiga kolom utama: `user`, `book`, dan `Book-Rating`. Pemilihan ini bertujuan untuk menyederhanakan data agar dapat langsung digunakan dalam proses pelatihan model rekomendasi.
 
-**7. Membagi Data menjadi Data Train dan Data Test**
+**7. Memisahkan Variabel dan Splitting Data**
+Pada tahapan ini data dipisahkan menjadi: 
+- Fitur (X): user, book
+- Label (y): book-rating
 
+Split Data Data dibagi menjadi data latih dan data uji dengan rasio 80:20 menggunakan train_test_split.
 
 
 # Modelling
