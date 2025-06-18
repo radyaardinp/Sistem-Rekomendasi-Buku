@@ -48,14 +48,16 @@ Adapun penjelasan masing-masing data adalah sebagai berikut:
 - Pada data buku memiliki dimensi data 271360 baris dan 8 kolom
 - Pada data buku terdapat missing value pada beberapa kolom, diantaranya Book-Author, Publisher, dan Image URL L
 
-  ![image](https://github.com/user-attachments/assets/a1ed2787-bbb3-4678-8767-48a803e5532b)
+  ![image](https://github.com/user-attachments/assets/9b1d216b-ae0f-40ac-bf15-c3a4fb52cce0)
+
 - Pada data buku terdapat duplikasi data pada judul buku sebanyak 29225 baris.
 - Agathe Christie merupakan penulis dengan karya buku terbanyak, yaitu sebanyak 632 buku
 
-  ![image](https://github.com/user-attachments/assets/11808e78-f35b-404a-ab75-6bd73179dcbd)
+  ![image](https://github.com/user-attachments/assets/c2b6d7a1-9a43-4664-982d-6734ac41b2a7)
+
 - Harlequin merupakan publisher dengan karya buku terbanyak, yaitu sebanyak 7535 buku.
 
-  ![image](https://github.com/user-attachments/assets/c812331b-717b-47f9-9542-cc69d21a55ca)
+  ![image](https://github.com/user-attachments/assets/e1404e74-e93c-40ba-8b57-b27e2f3d4b49)
 
 #### Data Rating
 | Nama Kolom           | Deskripsi                                           |
@@ -68,15 +70,15 @@ Adapun penjelasan masing-masing data adalah sebagai berikut:
 - Pada data rating tidak memiliki missing value dan data yang duplikat
 - Pada data rating, rating 0 memiliki jumlah buku paling banyak, yaitu 716109 karya
 
-   ![image](https://github.com/user-attachments/assets/b31fd158-bbe3-485b-8d97-c077e96544cd)
+  ![image](https://github.com/user-attachments/assets/2a0764d9-a5fa-487a-a357-6eb7699914b0)
 
 - Pada data rating, user 11676 merupakan user yang paling sering memberikan rating.
 
-  ![image](https://github.com/user-attachments/assets/f4d6183e-3e18-467d-95ff-951424e70d07)
+  ![image](https://github.com/user-attachments/assets/dc68a9f8-a792-4536-af41-7103f47313b8)
 
 - Pada data rating, buku dengan nomor ISBN 0971880107 merupakan buku yang paling sering diberikan rating.
 
-  ![image](https://github.com/user-attachments/assets/bb53f135-f1c2-4185-b447-38feee24e2f7)
+  ![image](https://github.com/user-attachments/assets/4c8ed359-f689-464a-af88-79db10b443b6)
 
 ## Data Preparation
 Pada tahap ini, dilakukan serangkaian proses untuk menyiapkan data sebelum masuk ke proses pelatihan model. Langkah-langkah yang dilakukan disusun secara sistematis untuk memastikan data bersih, konsisten, dan relevan. Berikut adalah tahapan data preparation yang dilakukan:
@@ -116,27 +118,25 @@ Hasil encoding disimpan ke dalam kolom baru `user` dan `book`. Kolom ini akan di
 **5. Menghitung Jumlah User dan Buku Unik.**
 Jumlah total pengguna dan buku dihitung menggunakan `nunique()` untuk menentukan dimensi embedding pada tahap pembuatan model. Ini penting agar ukuran representasi vektor sesuai dengan jumlah entitas unik yang akan dipelajari.
 
-**6. Mempersiapkan Data untuk Modeling**
+**6. Mempersiapkan Data untuk Modeling.**
 Dataset akhir yang digunakan hanya terdiri dari tiga kolom utama: `user`, `book`, dan `Book-Rating`. Pemilihan ini bertujuan untuk menyederhanakan data agar dapat langsung digunakan dalam proses pelatihan model rekomendasi.
 
-**7. Memisahkan Variabel dan Splitting Data**
+**7. Memisahkan Variabel dan Splitting Data.**
 Pada tahapan ini data dipisahkan menjadi: 
 - Fitur (X): user, book
 - Label (y): book-rating
 
-Split Data Data dibagi menjadi data latih dan data uji dengan rasio 80:20 menggunakan train_test_split.
-
+Split Data Data dibagi menjadi data latih dan data uji dengan rasio 80:20 menggunakan `train_test_split`.
 
 # Modelling
 Untuk menyelesaikan permasalahan dalam menyajikan rekomendasi buku yang relevan kepada pengguna, proyek ini mengimplementasikan dua pendekatan sistem rekomendasi, yaitu Content-Based Filtering dan Collaborative Filtering berbasis CNN. Kedua pendekatan ini dirancang untuk menghasilkan rekomendasi personal berdasarkan preferensi pengguna, namun dengan cara yang berbeda.
 
 ## Content-Based Filtering
-Pada pendekatan ini, sistem merekomendasikan buku berdasarkan kemiripan konten antar item. Fitur-fitur seperti judul, penulis, dan penerbit digabungkan ke dalam satu kolom `combined_features`, lalu diubah menjadi vektor numerik menggunakan TF-IDF Vectorization. Kemiripan antar buku dihitung menggunakan cosine similarity, yang menghasilkan skor kesamaan antara satu buku dengan buku lainnya.
+Pada pendekatan ini, sistem merekomendasikan buku berdasarkan kemiripan konten antar item. Fitur-fitur seperti judul, penulis, dan penerbit digabungkan ke dalam satu kolom `combined_features`, lalu diubah menjadi representasi vektor menggunakan `TF-IDF Vectorization`. Selanjutnya, cosine similarity digunakan untuk mengukur tingkat kemiripan antar buku.
 
-Fungsi  `recommend_books()` dibangun untuk menerima input judul buku dan mengembalikan daftar top-5 buku yang paling mirip. Sebagai contoh, ketika pengguna memilih buku "American Gods", sistem berhasil merekomendasikan buku-buku karya Neil Gaiman lainnya seperti "Coraline" dan "Good Omens", yang menunjukkan bahwa pendekatan ini efektif dalam menangkap kesamaan gaya dan konten penulis.
+Fungsi `recommend_books_content_based()` digunakan untuk menerima input judul buku dan menghasilkan daftar top-5 buku dengan kemiripan tertinggi. Evaluasi dilakukan menggunakan metrik Precision@5 yang membandingkan ISBN dari buku yang direkomendasikan dengan buku yang disukai pengguna (berdasarkan rating ≥ 7). Hasil evaluasi menunjukkan nilai Precision@5 sebesar **0.0093**, yang mengindikasikan bahwa meskipun sistem dapat mengenali kemiripan konten, tingkat relevansi rekomendasi terhadap preferensi pengguna masih rendah dibandingkan pendekatan Collaborative Filtering.
 
 ![image](https://github.com/user-attachments/assets/b3600731-6ad2-4084-8252-083f661703f3)
-
 
 ## Collaborative Filtering dengan CNN
 Pada pendekatan kedua, sistem menggunakan Collaborative Filtering berbasis Neural Network dengan arsitektur yang melibatkan embedding layer dan Convolutional Neural Network (CNN) sederhana untuk mempelajari interaksi antara pengguna dan buku. Data yang digunakan adalah pasangan `user`, `book`, dan `Book-Rating`, yang telah di-encode secara numerik. Model dilatih menggunakan data train-test split sebesar 80:20 dan dioptimasi dengan loss function Mean Squared Error (MSE).
@@ -156,25 +156,35 @@ Kedua pendekatan berhasil menghasilkan top-N recommendation yang relevan. Pada c
 
 
 # Evaluasi
-Evaluasi dilakukan untuk mengukur seberapa baik model dalam memprediksi rating pengguna terhadap buku. Pada proyek ini, pendekatan Collaborative Filtering berbasis CNN dievaluasi menggunakan metrik Root Mean Squared Error (RMSE) serta visualisasi training vs validation loss untuk menilai stabilitas proses pelatihan model.
+Evaluasi dilakukan untuk mengukur seberapa baik model dalam memberikan rekomendasi yang relevan terhadap preferensi pengguna. Pada proyek ini, digunakan dua pendekatan, yaitu Content-Based Filtering dan Collaborative Filtering berbasis CNN. Evaluasi mencakup metrik Root Mean Squared Error (RMSE) untuk prediksi rating, serta Precision@5 untuk mengukur relevansi rekomendasi buku.
 
-### Metrik Evaluasi: RMSE
-Root Mean Squared Error (RMSE) mengukur rata-rata kesalahan kuadrat antara nilai prediksi dan nilai aktual, dan sangat umum digunakan dalam sistem rekomendasi berbasis regresi (rating prediksi). Semakin kecil nilai RMSE, semakin akurat prediksi model terhadap preferensi pengguna. Berikut ini merupakan formula RMSE adalah:
+### 1. Content-Based Filtering
+Pada pendekatan ini, sistem merekomendasikan buku berdasarkan kemiripan konten seperti judul, penulis, dan penerbit, menggunakan TF-IDF dan cosine similarity. Evaluasi dilakukan menggunakan metrik Precision@5. berikut ini adalah Rumus dari precision@k:
 
-![image](https://github.com/user-attachments/assets/e6f2fe8d-e025-404c-b144-47c1a0167989)
+![image](https://github.com/user-attachments/assets/339a3a53-333f-4458-bd12-ed28b6f91864)
 
-### Hasil Pengujian
-Setelah pelatihan selama 5 epoch, model diuji pada data uji dan menghasilkan **nilai RMSE sebesar 1.6089.** Nilai ini menunjukkan bahwa rata-rata kesalahan prediksi rating pengguna terhadap buku masih tergolong kecil, menandakan bahwa **model cukup baik dalam mempelajari pola interaksi user-item**.
+keterangan:
+- K = jumlah item yang direkomendasikan 
+- Rekomendasi yang relevan = item dalam daftar rekomendasi yang benar-benar disukai oleh pengguna
 
-### Grafik Training vs Validation Loss
-Grafik berikut menunjukkan tren penurunan loss pada data pelatihan dan validasi:
+#### Hasil pengujian
+Model menghasilkan nilai Precision@5 sebesar 0.0093, yang menunjukkan bahwa hanya sedikit dari rekomendasi yang sesuai dengan preferensi pengguna (berdasarkan rating ≥ 7). Nilai ini tergolong rendah, mengindikasikan bahwa meskipun sistem mampu mengenali kemiripan konten, namun belum mampu secara akurat menangkap relevansi terhadap selera pengguna.
 
-![image](https://github.com/user-attachments/assets/95ea79e5-a500-4c77-b76b-a67a948b591e)
+### 2. Collaborative Filtering
+Pendekatan ini menggunakan arsitektur CNN untuk mempelajari pola interaksi antara pengguna dan item (buku), dengan target memprediksi nilai rating. Evaluasi dilakukan menggunakan metrik RMSE.
 
-Kedua kurva menurun dengan stabil, tanpa adanya perbedaan signifikan antara training loss dan validation loss. Hal ini menunjukkan bahwa model tidak mengalami overfitting, dan proses pembelajaran berlangsung efektif.
+##### Metrik Evaluasi: RMSE
+Root Mean Squared Error (RMSE) mengukur rata-rata kesalahan kuadrat antara nilai prediksi dan aktual. Semakin kecil RMSE, semakin akurat model. Berikut ini formula RMSE:
 
-### Interpretasi
-Hasil evaluasi menunjukkan bahwa model Collaborative Filtering dengan CNN dapat bekerja secara stabil dan cukup akurat. Nilai RMSE yang relatif rendah dan grafik loss yang konvergen membuktikan bahwa model mampu melakukan generalisasi yang baik terhadap data baru. Meskipun arsitektur model lebih kompleks dibanding content-based, pendekatan ini unggul dalam menangkap preferensi pengguna secara lebih dinamis dan personal.
+![image](https://github.com/user-attachments/assets/32565a8a-ab51-4f7e-b84c-f6575cc76780)
+
+##### Hasil Pengujian:
+Setelah pelatihan selama 5 epoch, model diuji pada data uji dan menghasilkan RMSE sebesar 1.6089, menandakan bahwa model cukup baik dalam memprediksi rating pengguna terhadap buku.
+
+##### Grafik Training vs Validation Loss:
+![image](https://github.com/user-attachments/assets/26f0d159-4925-41b1-a192-a6b7eced2b46)
+
+Berdasarkan grafik di atas, kedua kurva menunjukkan penurunan yang stabil tanpa gap signifikan, menandakan proses pelatihan berlangsung efektif dan model tidak mengalami overfitting.
 
 # Kesimpulan
 Berdasarkan penelitian yang telah dilakukan, sistem rekomendasi dibangun menggunakan dua pendekatan, yaitu Content-Based Filtering dan Collaborative Filtering. Pada pendekatan Content-Based, rekomendasi diberikan berdasarkan kemiripan judul buku menggunakan metode TF-IDF dan cosine similarity. Meskipun berhasil menghasilkan rekomendasi buku yang mirip secara konten, evaluasi menggunakan metrik Precision@5 menunjukkan nilai yang cukup rendah, yaitu sebesar 0.0093. Hal ini menandakan bahwa rekomendasi yang dihasilkan belum sepenuhnya relevan dengan preferensi pengguna.
