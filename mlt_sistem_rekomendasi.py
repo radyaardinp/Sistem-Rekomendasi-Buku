@@ -67,66 +67,89 @@ df_rating
 ##### Books
 
 Pada tahap Eksplorasi Data atau Data Understanding akan dilakukan bertahap sesuai dengan dataset masing-masing. yang pertama adalah dataset books.
-
-langkah pertama adalah memeriksa ukuran dimensi data untuk mengetahui berapa jumlah baris dan kolom pada dataset book.
 """
 
+# memeriksa ukuran dimensi data untuk mengetahui berapa jumlah baris dan kolom pada dataset book.
 print(f'dimensi dataset buku:', df_book.shape)
 
-"""memeriksa nilai yang hilang (missing value) pada dataset buku"""
+"""pada data buku, memiliki 271360 baris dan 8 kolom"""
 
-#Missing value buku
+# memeriksa nilai yang hilang (missing value) pada dataset buku
 df_book.isnull().sum()
 
-"""memeriksa jumlah nilai yang duplikat pada judul buku (Book-Title) pada dataset."""
+"""berdasarkan tabel di atas, terdapat beberapa missing value pada data buku, yaitu pada kolom Book-Author, Publisher, dan Image-URL-L. dalam hal ini akan dilakukan penanganan dengan cara imputasi data pada kolom Book-Author dan Publisher, sedangkan pada kolom Image-URL-L akan dilakukan penghapusan."""
 
-#Data duplikat
+# memeriksa jumlah nilai yang duplikat pada judul buku (Book-Title) pada dataset.
 df_book.duplicated(["Book-Title"]).sum()
 
-"""memeriksa tipe data pada setiap kolom"""
+"""dari hasil di atas didapatkan data duplikat dari data books berjumlah 29225"""
 
+# Memeriksa tipe data pada setiap kolom
 df_book.info()
 
-"""melihat jumlah karya yang dihasilkan oleh penulis buku (Book-Author)"""
+"""dari hasil pengecekan di atas, tipe data tiap kolom sudah sesuai. sehingga tidak memerlukan penanganan."""
 
+#melihat jumlah karya yang dihasilkan oleh penulis buku (Book-Author)
 df_book['Book-Author'].value_counts().head(10)
 
-"""melihat jumlah karya yang dihasilkan oleh suatu publisher"""
+"""Dari hasil analisis, diperoleh daftar 10 besar penulis dengan jumlah buku terbanyak. Penulis dengan jumlah terbanyak adalah **Agatha Christie** dengan 632 buku, diikuti oleh **William Shakespeare** (567 buku) dan **Stephen King** (524 buku).
 
-df_book['Publisher'].value_counts().head(10)
-
-"""### Rating
-
-memeriksa dimensi ukuran dataset rating
 """
 
+#melihat jumlah karya yang dihasilkan oleh suatu publisher
+df_book['Publisher'].value_counts().head(10)
+
+"""Berdasarkan hasil agregasi data:
+- **Harlequin** menjadi penerbit dengan jumlah buku terbanyak, yaitu sebanyak 7.535 buku.
+- Diikuti oleh **Silhouette** (4.220 buku), **Pocket** (3.905 buku), dan **Ballantine Books** (3.783 buku).
+
+### Rating
+"""
+
+# Memeriksa dimensi ukuran dataset rating
 print(f'dimensi dataset rating:', df_rating.shape)
 
-"""memeriksa jumlah nilai yang hilang (missing value) pada dataset rating"""
+"""dari hasil di atas, data rating memiliki 1149780 baris dan 3 kolom"""
 
+# Memeriksa jumlah nilai yang hilang (missing value) pada dataset rating
 df_rating.isnull().sum()
 
-"""memeriksa nilai yang duplikat pada dataset rating"""
+"""Dari hasil di atas, data rating tidak memiliki missing value. sehingga tidak perlu dilakukan penanganan"""
 
+# Memeriksa nilai yang duplikat pada dataset rating
 df_rating.duplicated().sum()
 
-"""memeriksa tipe data pada setiap fitur kolom"""
+"""data rating tidak memiliki data duplikat. sehingga tidak perlu dilakukan penanganan"""
 
+# memeriksa tipe data pada setiap fitur kolom
 df_rating.info()
 
-"""menghitung jumlah buku berdasarkan ratingnya."""
+"""dari informasi di atas, data rating sudah memiliki tipe data yang sesuai"""
 
+#Menghitung jumlah buku berdasarkan ratingnya.
 df_rating['Book-Rating'].value_counts()
 
-"""memeriksa pengguna yang memberikan rating terbanyak dalam dataset"""
+"""berdasarkan tabel di atas, didapatkan insight sebagai berikut:
+- Nilai **0**  paling banyak muncul (**>716 ribu entri**), menandakan bahwa rating ini kemungkinan besar memberikan informasi bahwa user **tidak memberikan rating eksplisit**.
+- Nilai **8–10** juga sangat dominan, menunjukkan adanya kecenderungan pengguna untuk memberikan rating yang **positif**, atau user menyukai buku tersebut.
+- Nilai **1–3** sangat jarang diberikan, yang mungkin menunjukkan bias positif pada sistem.
 
+"""
+
+#memeriksa pengguna yang memberikan rating terbanyak dalam dataset
 df_rating['User-ID'].value_counts().head(10)
 
-"""Menampilkan buku yang paling sering diberikan rating berdasarkan nomor ISBN."""
+"""Tabel di atas menunjukkan bahwa hanya sebagian kecil pengguna yang sangat aktif memberikan rating buku, dengan User-ID 11676 menjadi yang paling aktif sebanyak 13.602 rating. Pola ini mencerminkan ketimpangan distribusi kontribusi user (power-law), yang umum dalam sistem rekomendasi. Pengguna-pengguna aktif seperti ini bisa sangat berguna dalam pelatihan model collaborative filtering, sementara pengguna pasif mungkin menimbulkan tantangan seperti cold-start.
 
+"""
+
+#Menampilkan buku yang paling sering diberikan rating berdasarkan nomor ISBN.
 df_rating['ISBN'].value_counts().head(10)
 
-"""# Data Preprocessing"""
+"""Hasil ini menunjukkan 10 buku dengan ISBN yang paling banyak mendapat rating dari pengguna, dengan ISBN `0971880107` menempati urutan pertama sebanyak 2.502 rating. Buku-buku ini kemungkinan merupakan buku populer yang dikenal luas oleh pengguna. Informasi ini penting untuk sistem rekomendasi karena item-item populer seperti ini cenderung memiliki representasi yang lebih kuat dalam model, sedangkan buku dengan sedikit rating mungkin kurang informatif dan berisiko terkena cold-start.
+
+# Data Preprocessing
+"""
 
 books = df_book
 ratings = df_rating
@@ -167,7 +190,10 @@ books['Publisher'] = books['Publisher'].str.lower().str.strip()
 
 books
 
-"""Menyaring buku-buku populer yang telah mendapatkan lebih dari 50 rating."""
+"""dataframe di atas menampilkan hasil normalisasi pada kolom Book-title, book-author, dan publisher dimana seluruh huruf sudah dalam bentuk huruf kecil (tidak ada huruf kapital).
+
+Menyaring buku-buku populer yang telah mendapatkan lebih dari 50 rating.
+"""
 
 # Filter buku populer
 popular_books = ratings['ISBN'].value_counts()
@@ -185,7 +211,10 @@ books_filtered['combined_features'] = (
 
 books_filtered
 
-"""Mengubah teks gabungan menjadi representasi numerik menggunakan metode TF-IDF yang digunakan untuk proses pencocokan kemiripan antar buku dalam content-based filtering. Proses ini menghasilkan matriks fitur dari kata-kata penting yang merepresentasikan karakteristik tiap buku."""
+"""berdasarkan dataframe di atas, telah dilakukan filtering terhadap buku-buku populer yang telah memiliki lebih dari 50 rating, dibuktikan dengan berkurangnya jumlah baris yang ada pada dataframe ini, yaitu 1889 baris. selain itu, pada data ini sudah bertambah kolom combined feature yang memuat kolom book-title, book-author, dan publisher.
+
+Mengubah teks gabungan menjadi representasi numerik menggunakan metode TF-IDF yang digunakan untuk proses pencocokan kemiripan antar buku dalam content-based filtering. Proses ini menghasilkan matriks fitur dari kata-kata penting yang merepresentasikan karakteristik tiap buku.
+"""
 
 # TF-IDF Vectorization
 tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
@@ -215,7 +244,10 @@ pd.DataFrame(
     index=books_filtered['Book-Title']
 ).sample(10, axis=1,replace=True).sample(10, axis=0)
 
-"""Menghitung skor kemiripan antar buku berdasarkan cosine similarity dari matriks TF-IDF, yang digunakan untuk menentukan seberapa mirip satu buku dengan buku lainnya dalam content-based filtering. Hasilnya berupa matriks simetri dengan nilai antara 0 hingga 1."""
+"""Tabel ini menunjukkan vektor representasi tiap buku berdasarkan hasil TF-IDF. Baris adalah judul buku, dan kolom adalah kata-kata unik yang diekstraksi. Nilai 0.0 berarti kata tidak relevan untuk buku tersebut. Matriks ini digunakan untuk menghitung kemiripan antar buku dalam Content-Based Filtering.
+
+Menghitung skor kemiripan antar buku berdasarkan cosine similarity dari matriks TF-IDF, yang digunakan untuk menentukan seberapa mirip satu buku dengan buku lainnya dalam content-based filtering. Hasilnya berupa matriks simetri dengan nilai antara 0 hingga 1.
+"""
 
 # Menghitung cosine similarity antar buku
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
@@ -244,7 +276,10 @@ active_users = ratings_cleaned['User-ID'].value_counts()[ratings_cleaned['User-I
 ratings_filtered = ratings_cleaned[ratings_cleaned['ISBN'].isin(active_books) & ratings_cleaned['User-ID'].isin(active_users)]
 ratings_filtered
 
-"""Menyalin data rating hasil filtering dan melakukan encoding terhadap User-ID dan ISBN menjadi format angka dengan LabelEncoder, agar dapat digunakan dalam model collaborative filtering yang memerlukan input numerik"""
+"""Dataframe di atas menampilkan hasil filtering yang menghasilkan 107.729 interaksi dari pengguna dan buku yang aktif.
+
+Menyalin data rating hasil filtering dan melakukan encoding terhadap User-ID dan ISBN menjadi format angka dengan LabelEncoder, agar dapat digunakan dalam model collaborative filtering yang memerlukan input numerik
+"""
 
 ratings = ratings_filtered.copy()
 
@@ -284,12 +319,10 @@ Dalam proyek ini, sistem rekomendasi dibangun dengan memanfaatkan dua pendekatan
 
 -------------------
 ## Content Based Section
-
-Membuat fungsi rekomendasi buku berdasarkan judul yang diberikan, dengan menggunakan skor kemiripan cosine antar buku. Fungsi ini akan mencari buku yang paling mirip (top N) dan mengembalikan informasi judul, penulis, dan penerbit sebagai hasil rekomendasi dalam content-based filtering.
 """
 
 # Fungsi rekomendasi berdasarkan judul buku
-def recommend_books(title, cosine_sim=cosine_sim, top_n=5):
+def recommend_books_content_based(title, cosine_sim=cosine_sim, top_n=5):
     idx = indices.get(title)
     if idx is None:
         return ["Judul tidak ditemukan."]
@@ -310,16 +343,118 @@ def recommend_books(title, cosine_sim=cosine_sim, top_n=5):
 
     return recommended_books_info.reset_index(drop=True)
 
-#Menyimpan model
-pickle.dump(tfidf_matrix, open("tfidf_matrix.pkl", "wb"))
-pickle.dump(cosine_sim, open("cosine_sim.pkl", "wb"))
+"""Fungsi ini menghasilkan rekomendasi **5 buku serupa** berdasarkan judul buku yang diberikan. Sistem menggunakan **cosine similarity** antar judul buku yang telah ditransformasikan dengan **TF-IDF**, kemudian memilih buku dengan skor kemiripan tertinggi. Informasi yang ditampilkan mencakup judul, penulis, dan penerbit buku.
 
-"""Melakukan uji coba fungsi rekomendasi dengan input judul "american gods"."""
+"""
 
-#uji coba model
-recommend_books('american gods')
+# Membuat ground truth dari user yang memberi rating >= 7
+user_likes = ratings_filtered[ratings_filtered['Book-Rating'] >= 7]
+user_true_books = user_likes.groupby('User-ID')['ISBN'].apply(list).to_dict()
 
-"""Berdasarkan hasil output uji coba model di atas, sistem berhasil menghasilkan daftar buku yang memiliki kemiripan konten, ditunjukkan dari kemunculan karya-karya lain dari penulis yang sama (Neil Gaiman), serta buku lain dengan karakteristik serupa. Hal ini menunjukkan bahwa model content-based filtering bekerja dengan baik dalam mengenali pola kemiripan berdasarkan informasi penulis, judul, dan penerbit.
+# Mengambil rekomendasi untuk user berdasarkan buku yang pernah mereka baca
+def get_user_recommendations(user_id, top_n=5):
+    user_books = ratings_filtered[ratings_filtered['User-ID'] == user_id]['ISBN'].tolist()
+    recommended_isbns = set()
+
+    for isbn in user_books:
+        title_row = books[books['ISBN'] == isbn]
+        if not title_row.empty:
+            title = title_row['Book-Title'].values[0]
+            # Call the content-based recommendation function
+            recs = recommend_books_content_based(title)
+            if isinstance(recs, pd.DataFrame):
+                # Need to get ISBNs for the recommended titles from the original 'books' dataframe
+                # as 'recs' only contains title, author, publisher
+                rec_isbns = books[books['Book-Title'].isin(recs['Book-Title'])]['ISBN'].tolist()
+                recommended_isbns.update(rec_isbns)
+
+    # Filter out books the user has already read from the recommendations
+    already_read_isbns = ratings_filtered[ratings_filtered['User-ID'] == user_id]['ISBN'].tolist()
+    recommended_isbns = [isbn for isbn in recommended_isbns if isbn not in already_read_isbns]
+
+    # Let's get the titles of the books the user has already read
+    already_read_titles = books[books['ISBN'].isin(already_read_isbns)]['Book-Title'].tolist()
+
+    # Convert recommended ISBNs back to titles for the return
+    recommended_titles = books[books['ISBN'].isin(list(recommended_isbns))]['Book-Title'].tolist()
+
+    # Return both recommended titles and already read titles
+    return recommended_titles[:top_n], already_read_titles[:top_n] # Limit both lists to top_n for consistency with the call
+
+"""Fungsi `get_user_recommendations()` menghasilkan daftar rekomendasi buku untuk seorang user berdasarkan buku-buku yang telah mereka beri rating ≥ 7. Untuk setiap buku yang telah dibaca user, sistem memanggil fungsi content-based filtering untuk mencari buku serupa berdasarkan judul.
+
+Rekomendasi dikembalikan dalam bentuk:
+- **Buku yang direkomendasikan (judul)** yang belum pernah dibaca user
+- **Daftar buku yang sudah pernah dibaca** (judul), sebagai referensi
+
+Rekomendasi dibatasi sejumlah `top_n` buku (default 5 judul).
+"""
+
+# Precision@K evaluasi (update the function call within this as well)
+def precision_at_k_content_based(user_true_books, top_n=5):
+    precision_scores = []
+    tested_users = list(user_true_books.keys())[:100]  # Sampling user
+
+    for user_id in tested_users:
+        true_books = set(user_true_books[user_id])
+        # Call the content-based recommendation function and unpack only the recommended titles
+        rec_books, _ = get_user_recommendations(user_id, top_n)
+
+        # We need to compare ISBNs, not titles, for evaluation against user_true_books
+        # Convert recommended titles back to ISBNs
+        rec_isbns = books[books['Book-Title'].isin(rec_books)]['ISBN'].tolist()
+
+        if not rec_isbns:
+            continue
+
+        hits = sum([1 for isbn in rec_isbns if isbn in true_books])
+        precision_scores.append(hits / top_n)
+
+    if not precision_scores: # Handle case where no users were tested or no recommendations were generated
+        return 0.0
+
+    return sum(precision_scores) / len(precision_scores)
+
+"""Fungsi `precision_at_k_content_based()` menghitung rata-rata precision dari 100 user terpilih.  
+Evaluasi dilakukan dengan membandingkan ISBN buku rekomendasi terhadap buku yang pernah diberi rating ≥ 7.  
+Metrik ini menunjukkan seberapa relevan rekomendasi yang diberikan sistem dalam Top-K pilihan.
+
+Bagian ini menjalankan evaluasi akurasi rekomendasi menggunakan metrik **Precision@5**, serta menguji fungsi rekomendasi berdasarkan data riil pengguna (contoh: user ID 276688).  
+Output menunjukkan daftar buku yang telah dibaca user dan rekomendasi buku baru dari sistem content-based filtering.
+"""
+
+# Menjalankan evaluasi
+precision_cb = precision_at_k_content_based(user_true_books, top_n=5)
+print(f"Precision@5 untuk Content-Based Filtering: {precision_cb:.4f}")
+
+user_id = 276688
+# The get_user_recommendations function now returns two lists: recommended titles and already read titles
+recommended_books, already_read = get_user_recommendations(user_id, top_n=5)
+
+print("Buku yang sudah dibaca dan dinilai user:")
+for book in already_read:
+    print("-", book)
+
+print("\nRekomendasi buku untuk user:")
+for book in recommended_books:
+    print("-", book)
+
+"""Hasil evaluasi menunjukkan nilai **Precision@5 sebesar 0.0093**, yang berarti bahwa dari 5 rekomendasi yang diberikan untuk masing-masing user, rata-rata hanya sekitar 0.0093 (kurang dari 1%) yang benar-benar sesuai dengan preferensi pengguna (berdasarkan data rating ≥ 7).
+
+Hasil rekomendasi untuk user ID 276688:
+- **Buku yang telah dibaca**: *basket case*, *stalker*, *in pursuit of the proper sinner*, dll.
+- **Rekomendasi sistem**: *lucky you*, *sick puppy*, *ashes to ashes*, dll.
+
+Meskipun rekomendasi tampak relevan secara tematik, nilai presisinya masih rendah, mengindikasikan bahwa penyempurnaan fitur atau pendekatan mungkin dibutuhkan.
+
+Pada bagian ini dilakukan pengujian sistem rekomendasi content-based filtering menggunakan input judul buku **"american gods"**. Sistem akan mencari dan menampilkan buku-buku lain yang memiliki kemiripan konten berdasarkan fitur teks judul dan deskripsi lainnya.
+"""
+
+# uji coba model with the renamed function
+print("\nUji coba rekomendasi buku berdasarkan judul:")
+print(recommend_books_content_based('american gods'))
+
+"""Berdasarkan hasil output uji coba model di atas, sistem berhasil menghasilkan daftar buku yang memiliki kemiripan konten, ditunjukkan dari kemunculan karya-karya lain dari penulis yang sama (Neil Gaiman), serta buku lain dengan karakteristik serupa.
 
 ----
 ## Collaborative Filtering
@@ -352,8 +487,11 @@ model = Model([user_input, book_input], output)
 model.compile(loss='mse', optimizer='adam')
 model.summary()
 
-"""Melatih model neural collaborative filtering menggunakan data pelatihan selama 5 epoch dengan batch size 256."""
+"""Model menggunakan dua input embedding untuk User dan Item (buku), masing-masing berdimensi 32. Hasil embedding diratakan (flatten), lalu digabungkan (concatenate) dan diproses oleh dua layer dense dengan dropout untuk regularisasi. Output model berupa prediksi rating tunggal. Total parameter yang dilatih sebanyak 585.473.
 
+"""
+
+# Melatih model neural collaborative filtering menggunakan data pelatihan selama 5 epoch dengan batch size 256.
 history = model.fit(
     [X_train['user'], X_train['book']],
     y_train,
@@ -362,11 +500,12 @@ history = model.fit(
     batch_size=256
 )
 
-"""Melakukan prediksi rating pada data uji menggunakan model yang telah dilatih, kemudian menghitung nilai RMSE (Root Mean Squared Error) sebagai metrik evaluasi"""
-
+#Menghitung nilai RMSE
 y_pred = model.predict([X_test['user'].values, X_test['book'].values])
 rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 print(f'RMSE: {rmse:.4f}')
+
+"""Model Collaborative Filtering menghasilkan RMSE sebesar 1.6089, yang menunjukkan rata-rata kesalahan prediksi rating sekitar 1.6 poin dari nilai sebenarnya."""
 
 plt.plot(history.history['loss'], label='Train Loss')
 plt.plot(history.history['val_loss'], label='Validation Loss')
@@ -376,7 +515,7 @@ plt.ylabel('Loss')
 plt.title('Training vs Validation Loss')
 plt.show()
 
-"""Berdasarkan grafik di atas, model menunjukkan penurunan nilai loss pada data latih dan validasi seiring bertambahnya epoch, yang mengindikasikan bahwa model berhasil belajar dan tidak mengalami overfitting. Perbedaan nilai yang kecil antara train loss dan validation loss juga menunjukkan kestabilan performa model.
+"""Berdasarkan grafik di atas, **model menunjukkan penurunan nilai loss pada data latih dan validasi** seiring bertambahnya epoch, yang mengindikasikan bahwa **model berhasil belajar dan tidak mengalami overfitting**. Perbedaan nilai yang kecil antara train loss dan validation loss juga menunjukkan kestabilan performa model.
 
 ----
 Selanjutnya adalah membuat fungsi rekomendasi buku berbasis collaborative filtering dengan input user_id. Fungsi ini akan mengidentifikasi buku-buku yang belum pernah diberi rating oleh pengguna tersebut, kemudian memprediksi rating potensial menggunakan model yang telah dilatih. Buku-buku dengan prediksi tertinggi akan direkomendasikan, dan hasilnya dikembalikan dalam bentuk daftar judul dan penulis. Pendekatan ini merekomendasikan buku berdasarkan pola interaksi pengguna lain yang mirip.
@@ -436,5 +575,5 @@ recommend_books(user_sample_id, model, ratings, books, top_n=5)
 
 # Kesimpulan
 
-Dalam sistem rekomendasi ini digunakan dua metode, yaitu Content-Based Filtering dan Collaborative Filtering. Content-based merekomendasikan buku berdasarkan kemiripan konten seperti judul dan penulis, cocok untuk rekomendasi personal terutama bagi pengguna baru. Sementara itu, collaborative filtering memanfaatkan pola rating pengguna lain untuk memprediksi preferensi, sehingga mampu memberikan rekomendasi yang lebih variatif. Kombinasi keduanya menghasilkan sistem yang lebih akurat, relevan, dan sesuai dengan kebutuhan pengguna.
+Percobaan sistem rekomendasi dilakukan dengan dua pendekatan, yaitu Content-Based Filtering dan Collaborative Filtering. Content-Based menggunakan TF-IDF dan cosine similarity untuk merekomendasikan buku yang mirip secara konten, namun hanya menghasilkan Precision\@5 sebesar 0.0093. Sementara itu, Collaborative Filtering yang memanfaatkan embedding dan jaringan saraf sederhana menunjukkan performa lebih baik dengan nilai RMSE sebesar 1.6089. Hal ini menunjukkan bahwa pendekatan Collaborative Filtering lebih efektif dalam memberikan rekomendasi yang relevan pada eksperimen ini.
 """
