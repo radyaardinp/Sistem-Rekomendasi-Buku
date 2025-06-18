@@ -119,6 +119,8 @@ Jumlah total pengguna dan buku dihitung menggunakan `nunique()` untuk menentukan
 **6. Mempersiapkan Data untuk Modeling**
 Dataset akhir yang digunakan hanya terdiri dari tiga kolom utama: `user`, `book`, dan `Book-Rating`. Pemilihan ini bertujuan untuk menyederhanakan data agar dapat langsung digunakan dalam proses pelatihan model rekomendasi.
 
+**7. Membagi Data menjadi Data Train dan Data Test**
+
 
 
 # Modelling
